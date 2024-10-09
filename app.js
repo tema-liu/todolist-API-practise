@@ -58,9 +58,19 @@ function getTodo(filter = "", callback = null) {
     .get(`${apiUrl}/todos`)
     .then((res) => {
       let todos = res.data.todos;
+      let unfinished = 0;
       if (todos.length > 0) {
         listNav.style.visibility = "visible";
+      } else {
+        listNav.style.visibility = "hidden"; // 添加这行
       }
+
+      //算出未完成項目數量
+      todos.forEach((e) => {
+        if (e.completed_at === null) {
+          unfinished += 1;
+        }
+      });
 
       if (filter === "待完成") {
         todos = todos.filter((item) => item.completed_at === null); // 只保留未完成的
@@ -74,7 +84,7 @@ function getTodo(filter = "", callback = null) {
       if (callback) {
         callback(todos);
       } else {
-        renderTodoList(todos);
+        renderTodoList(todos, unfinished);
       }
     })
     .catch((error) => console.log(error.response.data));

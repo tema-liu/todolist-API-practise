@@ -4,7 +4,6 @@ const formSignUp = document.querySelector(".signUp-section");
 let tags = document.querySelectorAll(".list-tag");
 // 為每個 tag 添加點擊事件
 const listNav = document.querySelector(".list-tags");
-console.log(listNav);
 
 setAxiosToken();
 
@@ -168,10 +167,9 @@ function finishEdit(element) {
   fixTodo(element.textContent.trim(), todoItem.dataset.id);
 }
 
-function renderTodoList(todos) {
+function renderTodoList(todos, unfinished) {
   const renderList = document.querySelector(".render-List");
   let dataList = "";
-  let unfinished = 0;
 
   if (todos.length === 0) {
     renderList.innerHTML = `<h2>目前尚無代辦事項</h2>
@@ -181,15 +179,12 @@ function renderTodoList(todos) {
               src="./image/8911ab6dcbda98df56e26aa23c6643ac.png"
               alt="list-img"
             />`;
-    document.getElementById("addText").value = ""; // 清空input輸入內容
+
     return; // 如果沒有待辦事項，提前返回
   }
-  dataList += ``;
 
   todos.forEach((item) => {
-    item.completed_at ? unfinished : unfinished++;
     let isChecked = item.completed_at ? "checked" : "";
-
     let addCheckClass = item.completed_at ? "list-addcheck" : "";
 
     dataList += `<div class="todo-item" data-id="${item.id}">
