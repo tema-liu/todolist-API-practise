@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="api-background">
+      <div class="login login-section">
+        <div class="left-img">
+          <img src="./image/logo_lg.png" alt="logo" />
+          <img
+            src="./image/ff8dca85661a71240c169adaabe22733.png"
+            alt="人物圖片"
+          />
+        </div>
+        <div class="main">
+          <h2>最實用的線上代辦事項服務</h2>
+          <form
+            class="input-pt"
+            id="loginForm"
+            action="/submit"
+            method="POST"
+            onsubmit="return validateLoginForm(event)"
+          >
+            <label for="username">Email</label>
+            <input
+              class="primary-input"
+              type="text"
+              id="username"
+              name="username"
+              required
+              autocomplete="username"
+              placeholder="請輸入Email"
+            />
+            <label for="password">密碼</label>
+            <input
+              class="primary-input"
+              type="password"
+              id="password"
+              name="password"
+              required
+              autocomplete="current-password"
+              placeholder="請輸入密碼"
+            />
+            <input
+              class="origin-btn btn-toggle-color"
+              type="submit"
+              value="登入"
+            />
+            <button
+              class="origin-btn btn-hover"
+              type="button"
+              onclick="toggleForms(false)"
+            >
+              註冊帳號
+            </button>
+          </form>
+        </div>
+      </div>
+      <div class="signUp signUp-section">
+        <div class="left-img">
+          <img src="./image/logo_lg.png" alt="logo" />
+          <img
+            src="./image/ff8dca85661a71240c169adaabe22733.png"
+            alt="人物圖片"
+          />
+        </div>
+        <div class="main">
+          <h2>註冊帳號</h2>
+          <form
+            class="input-pt"
+            id="signUpForm"
+            action="/register"
+            method="POST"
+            onsubmit="return  validateSignUpForm(event)"
+          >
+            <!-- Email 欄位 -->
+            <label for="email">Email</label>
+
+            <input
+              class="primary-input"
+              type="email"
+              id="email"
+              name="email"
+              required
+              autocomplete="username"
+              placeholder="請輸入帳號"
+            />
+            <!-- 暱稱欄位 -->
+            <label for="nickname">您的暱稱</label>
+
+            <input
+              class="primary-input"
+              type="text"
+              id="nickname"
+              name="nickname"
+              placeholder="請輸入您的暱稱"
+              required
+            />
+            <!-- 密碼欄位 -->
+            <label for="sighUpPassword">密碼</label>
+
+            <input
+              class="primary-input"
+              type="password"
+              id="sighUpPassword"
+              name="sighUpPassword"
+              required
+              autocomplete="new-password"
+              placeholder="請輸入至少6位數的密碼"
+            />
+            <!-- 再次輸入密碼欄位 -->
+            <label for="confirm_password">再次輸入密碼</label>
+
+            <input
+              class="primary-input"
+              type="password"
+              id="confirm_password"
+              name="confirm_password"
+              required
+              autocomplete="new-password"
+              placeholder="請再次輸入密碼"
+            />
+            <!-- 註冊帳號按鈕 -->
+            <input
+              class="origin-btn btn-toggle-color"
+              type="submit"
+              value="註冊帳號"
+            />
+            <!-- 登入按鈕 -->
+            <button
+              class="origin-btn btn-hover"
+              type="button"
+              onclick="toggleForms(true)"
+            >
+              登入
+            </button>
+          </form>
+        </div>
+      </div>
+      <div class="todo none">
+        <nav class="todo-nav">
+          <img class="todo-img" src="./image/logo_lg.png" alt="logo" />
+          <div>
+            <p class="todo-nav-text">陌生人的代辦</p>
+            <button class="todo-nav-btn" onclick="signOutTodoList()">
+              登出
+            </button>
+          </div>
+        </nav>
+        <div class="todo-main">
+          <form class="add-items" onsubmit="return addItemsForm(event)">
+            <input
+              class="add-items-input"
+              type="text"
+              id="addText"
+              placeholder="新增代辦事項"
+              required
+            />
+            <div><input type="submit" value="+" /></div>
+          </form>
+          <div class="list-tags">
+            <div class="list-tag list-active"><a href="#">全部</a></div>
+            <div class="list-tag"><a href="#">待完成</a></div>
+            <div class="list-tag"><a href="#">已完成</a></div>
+          </div>
+          <div class="render-List">
+            <h2>目前尚無代辦事項</h2>
+            <img
+              width="240px"
+              height="250px"
+              src="./image/8911ab6dcbda98df56e26aa23c6643ac.png"
+              alt="list-img"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+    <script src="app.js"></script>
+    <script src="all.js"></script>
+  </body>
+</html>
