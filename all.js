@@ -1,10 +1,9 @@
 const formLogin = document.querySelector(".login-section ");
 const formSignUp = document.querySelector(".signUp-section");
-// let listTag = document.querySelectorAll(".list-tag a");
-let tags = document.querySelectorAll(".list-tag");
-// 為每個 tag 添加點擊事件
 const listNav = document.querySelector(".list-tags");
+let tags = document.querySelectorAll(".list-tag");
 let filterTarget;
+const renderList = document.querySelector(".render-List");
 
 setAxiosToken();
 
@@ -146,32 +145,42 @@ function addItemsForm(event) {
     });
 }
 
-function startEdit(element) {
-  element.setAttribute("contenteditable", "true");
-  element.focus();
+//監聽列表點擊
+renderList.addEventListener("click", (event) => {
+  const target = event.target;
+
+  //如果點擊到文字內容，可修改內容
+  if (target.tagName == "SPAN") {
+    startEdit(target);
+  }
+});
+
+function startEdit(e) {
+  e.setAttribute("contenteditable", "true");
+  e.focus();
 
   // 元素失去focus後執行
-  element.onblur = function () {
-    finishEdit(element);
+  e.onblur = function () {
+    finishEdit(e);
   };
 
   document.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
       event.preventDefault(); //防止換行
-      element.blur(); //取消焦點
+      e.blur(); //取消焦點
     }
   });
 }
+
 function finishEdit(element) {
   element.setAttribute("contenteditable", "false");
   const todoItem = element.closest(".todo-item");
   fixTodo(element.textContent.trim(), todoItem.dataset.id);
 }
 
+//渲染畫面邏輯
 function renderTodoList(todos, unfinished) {
-  const renderList = document.querySelector(".render-List");
   let dataList = "";
-
   if (todos.length === 0) {
     renderList.innerHTML = `<h2>目前尚無代辦事項</h2>
        <img
@@ -190,7 +199,7 @@ function renderTodoList(todos, unfinished) {
 
     dataList += `<div class="todo-item" data-id="${item.id}">
         <input id="${item.id}" type="checkbox" class="todo-checkbox " ${isChecked} onchange="toggleTodo('${item.id}')">
-        <span class="todo-content ${addCheckClass}" contenteditable="false" onclick="startEdit(this)">${item.content}</span>
+        <span class="todo-content ${addCheckClass}" contenteditable="false" >${item.content}</span>
         <button class="delete-btn" onclick="deleteTodo('${item.id}')">✕</button>
       </div>
       `;
@@ -221,9 +230,9 @@ function deleteFinishedList(e) {
 function tagsActive() {
   tags.forEach((tag) => {
     tag.addEventListener("click", function (e) {
-      // filterList(e.target.innerText);
       filterTarget = e.target.innerText;
       refreshTodoList();
+
       // 先移除所有元素的 list-active 樣式
       tags.forEach((t) => t.classList.remove("list-active"));
       // 為當前點擊的元素添加 list-active 樣式

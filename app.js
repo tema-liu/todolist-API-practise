@@ -62,7 +62,6 @@ function getTodo(filter = "", callback = null) {
         : (listNav.style.visibility = "hidden");
 
       //算出未完成項目數量
-      // 計算未完成的待辦事項數量
       unfinished = todos.filter((e) => e.completed_at === null).length;
 
       if (filter === "待完成") {
