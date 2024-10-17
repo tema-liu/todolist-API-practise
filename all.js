@@ -4,6 +4,7 @@ const formSignUp = document.querySelector(".signUp-section");
 let tags = document.querySelectorAll(".list-tag");
 // 為每個 tag 添加點擊事件
 const listNav = document.querySelector(".list-tags");
+let filterTarget;
 
 setAxiosToken();
 
@@ -206,10 +207,12 @@ function renderTodoList(todos, unfinished) {
 function deleteFinishedList(e) {
   e.preventDefault();
 
+  //取得已完成的代辦事項
   getTodo("已完成", (completedTodos) => {
     Promise.all(completedTodos.map((todo) => deleteTodo(todo.id)))
       .then(() => {
-        getTodo(); // 重新獲取並渲染待辦事項列表
+        // 刪除已完成項目後根據當前篩選條件重新渲染列表
+        getTodo(filterTarget === "全部" ? "" : filterTarget);
       })
       .catch((error) => console.error("刪除已完成待辦事項時出錯：", error));
   });
@@ -219,6 +222,7 @@ function tagsActive() {
   tags.forEach((tag) => {
     tag.addEventListener("click", function (e) {
       filterList(e.target.innerText);
+      filterTarget = e.target.innerText;
       // 先移除所有元素的 list-active 樣式
       tags.forEach((t) => t.classList.remove("list-active"));
       // 為當前點擊的元素添加 list-active 樣式
@@ -231,3 +235,5 @@ function filterList(event) {
   const filterType = event;
   getTodo(filterType === "全部" ? "" : filterType);
 }
+
+function deleteSingleTodo() {}

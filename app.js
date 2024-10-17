@@ -121,7 +121,7 @@ function deleteTodo(todoId) {
   axios
     .delete(`${apiUrl}/todos/${todoId}`)
     .then((res) => {
-      getTodo();
+      getTodo(filterTarget === "全部" ? "" : filterTarget);
     })
     .catch((error) => console.log(error.response));
 }
