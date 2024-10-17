@@ -270,6 +270,7 @@ input {
     cursor: pointer; /* 游標樣式 */
     margin-right: 16px;
     display: block;
+    flex: none; //避免方塊被擠壓
     width: 20px;
     height: 20px;
     border-radius: 5px;
@@ -289,6 +290,7 @@ input {
   }
   .todo-content {
     display: block;
+    overflow: hidden;
   }
   .delete-btn {
     background-color: transparent;

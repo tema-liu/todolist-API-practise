@@ -135,10 +135,10 @@ function addItemsForm(event) {
     return false; // 阻止表單提交
   }
 
-  // 等待 addTodo 完成后再调用 getTodo
   addTodo(addText)
     .then(() => {
-      getTodo(); // 新增任务成功后，刷新代办列表
+      getTodo();
+      alert("新增成功");
     })
     .catch((error) => {
       console.error("新增失敗:", error);
@@ -189,7 +189,7 @@ function renderTodoList(todos, unfinished) {
     let addCheckClass = item.completed_at ? "list-addcheck" : "";
 
     dataList += `<div class="todo-item" data-id="${item.id}">
-        <input type="checkbox" class="todo-checkbox " ${isChecked} onchange="toggleTodo('${item.id}')">
+        <input id="${item.id}" type="checkbox" class="todo-checkbox " ${isChecked} onchange="toggleTodo('${item.id}')">
         <span class="todo-content ${addCheckClass}" contenteditable="false" onclick="startEdit(this)">${item.content}</span>
         <button class="delete-btn" onclick="deleteTodo('${item.id}')">✕</button>
       </div>
@@ -212,7 +212,7 @@ function deleteFinishedList(e) {
     Promise.all(completedTodos.map((todo) => deleteTodo(todo.id)))
       .then(() => {
         // 刪除已完成項目後根據當前篩選條件重新渲染列表
-        getTodo(filterTarget === "全部" ? "" : filterTarget);
+        refreshTodoList();
       })
       .catch((error) => console.error("刪除已完成待辦事項時出錯：", error));
   });
@@ -221,8 +221,9 @@ function deleteFinishedList(e) {
 function tagsActive() {
   tags.forEach((tag) => {
     tag.addEventListener("click", function (e) {
-      filterList(e.target.innerText);
+      // filterList(e.target.innerText);
       filterTarget = e.target.innerText;
+      refreshTodoList();
       // 先移除所有元素的 list-active 樣式
       tags.forEach((t) => t.classList.remove("list-active"));
       // 為當前點擊的元素添加 list-active 樣式
@@ -231,9 +232,6 @@ function tagsActive() {
   });
 }
 
-function filterList(event) {
-  const filterType = event;
-  getTodo(filterType === "全部" ? "" : filterType);
+function refreshTodoList() {
+  getTodo(filterTarget === "全部" ? "" : filterTarget);
 }
-
-function deleteSingleTodo() {}

@@ -270,6 +270,7 @@ input {
   cursor: pointer; /* 游標樣式 */
   margin-right: 16px;
   display: block;
+  flex: none;
   width: 20px;
   height: 20px;
   border-radius: 5px;
@@ -289,6 +290,7 @@ input {
 }
 .todo-item .todo-content {
   display: block;
+  overflow: hidden;
 }
 .todo-item .delete-btn {
   background-color: transparent;

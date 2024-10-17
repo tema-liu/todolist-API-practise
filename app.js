@@ -1,6 +1,4 @@
 const apiUrl = `https://todoo.5xcamp.us`;
-//Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI3NzEwIiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNzI4MDMzMDYwLCJleHAiOjE3MjkzMjkwNjAsImp0aSI6IjZkZWEzZjg1LTNlY2ItNDQ2Mi1hZGQ4LTEwNTVhMzVmZjUxOCJ9.XiLMIsLWvCF9ZvzltNF7uiIDRwVY23DdtJWbOIFu_mI
-
 //註冊
 function signUp(email, nickname, pwd) {
   axios
@@ -59,18 +57,13 @@ function getTodo(filter = "", callback = null) {
     .then((res) => {
       let todos = res.data.todos;
       let unfinished = 0;
-      if (todos.length > 0) {
-        listNav.style.visibility = "visible";
-      } else {
-        listNav.style.visibility = "hidden"; // 添加这行
-      }
+      todos.length > 0
+        ? (listNav.style.visibility = "visible")
+        : (listNav.style.visibility = "hidden");
 
       //算出未完成項目數量
-      todos.forEach((e) => {
-        if (e.completed_at === null) {
-          unfinished += 1;
-        }
-      });
+      // 計算未完成的待辦事項數量
+      unfinished = todos.filter((e) => e.completed_at === null).length;
 
       if (filter === "待完成") {
         todos = todos.filter((item) => item.completed_at === null); // 只保留未完成的
@@ -121,7 +114,7 @@ function deleteTodo(todoId) {
   axios
     .delete(`${apiUrl}/todos/${todoId}`)
     .then((res) => {
-      getTodo(filterTarget === "全部" ? "" : filterTarget);
+      refreshTodoList();
     })
     .catch((error) => console.log(error.response));
 }
