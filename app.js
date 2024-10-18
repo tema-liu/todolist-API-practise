@@ -1,4 +1,9 @@
 const apiUrl = `https://todoo.5xcamp.us`;
+
+let todos = []; //儲存todoList資料
+let token = ""; //儲存金鑰
+let unfinished = 0;
+
 //註冊
 function signUp(email, nickname, pwd) {
   axios
@@ -34,9 +39,8 @@ function login(email, pwd) {
       localStorage.setItem("token", res.headers.authorization);
       localStorage.setItem("nickname", res.data.nickname);
 
-      //渲染todolist畫面
+      //登入成功後設定token渲染todolist畫面
       setAxiosToken();
-      getTodo();
     })
     .catch((error) => alert(error.response.data.message));
 }
@@ -46,17 +50,21 @@ function signOut(token) {
     .delete(`${apiUrl}/users/sign_out`)
     .then((res) => {
       alert(res.data.message);
+      localStorage.clear();
+      window.location.reload();
     })
     .catch((error) => alert(error.response.data.message));
 }
+let count = 0;
 
 //取得todolist
-function getTodo(filter = "", callback = null) {
+function getTodo() {
   axios
     .get(`${apiUrl}/todos`)
     .then((res) => {
-      let todos = res.data.todos;
-      let unfinished = 0;
+      console.log(count++);
+      todos = res.data.todos;
+
       todos.length > 0
         ? (listNav.style.visibility = "visible")
         : (listNav.style.visibility = "hidden");
@@ -64,20 +72,7 @@ function getTodo(filter = "", callback = null) {
       //算出未完成項目數量
       unfinished = todos.filter((e) => e.completed_at === null).length;
 
-      if (filter === "待完成") {
-        todos = todos.filter((item) => item.completed_at === null); // 只保留未完成的
-      } else if (filter === "已完成") {
-        todos = todos.filter((item) => item.completed_at !== null); // 只保留已完成的
-      }
-      todos.sort((a, b) => {
-        return a.id.localeCompare(b.id);
-      }); //用ID來進行項目排序
-
-      if (callback) {
-        callback(todos);
-      } else {
-        renderTodoList(todos, unfinished);
-      }
+      renderTodoList(todos, unfinished);
     })
     .catch((error) => console.log(error.response.data));
 }
@@ -113,7 +108,7 @@ function deleteTodo(todoId) {
   axios
     .delete(`${apiUrl}/todos/${todoId}`)
     .then((res) => {
-      refreshTodoList();
+      getTodo();
     })
     .catch((error) => console.log(error.response));
 }

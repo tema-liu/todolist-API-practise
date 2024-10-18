@@ -4,6 +4,7 @@ const listNav = document.querySelector(".list-tags");
 let tags = document.querySelectorAll(".list-tag");
 let filterTarget;
 const renderList = document.querySelector(".render-List");
+const signOutBtn = document.querySelector(".todo-nav-btn");
 
 setAxiosToken();
 
@@ -106,9 +107,9 @@ function hideElementIfNotNone(selector) {
 }
 
 function setAxiosToken() {
-  const token = localStorage.getItem("token"); //取得網頁中的token元素
+  token = localStorage.getItem("token"); //取得網頁中的token元素
   const nickname = localStorage.getItem("nickname"); //取得網頁中的token元素
-  axios.defaults.headers.common["Authorization"] = token; //預設axios的token
+  axios.defaults.headers.common["Authorization"] = token; //登入成功後設定axios的預設token
   if (token) {
     hideElementIfNotNone(".login");
     hideElementIfNotNone(".signUp");
@@ -120,10 +121,7 @@ function setAxiosToken() {
 }
 
 function signOutTodoList() {
-  const token = localStorage.getItem("token"); //取得網頁中的token元素
   signOut(token);
-  localStorage.clear();
-  window.location.reload();
 }
 
 function addItemsForm(event) {
@@ -179,9 +177,9 @@ function finishEdit(element) {
 }
 
 //渲染畫面邏輯
-function renderTodoList(todos, unfinished) {
+function renderTodoList(curTodos, unfinished) {
   let dataList = "";
-  if (todos.length === 0) {
+  if (curTodos.length === 0) {
     renderList.innerHTML = `<h2>目前尚無代辦事項</h2>
        <img
               width="240px"
@@ -193,12 +191,13 @@ function renderTodoList(todos, unfinished) {
     return; // 如果沒有待辦事項，提前返回
   }
 
-  todos.forEach((item) => {
+  curTodos.sort((a, b) => a.id.localeCompare(b.id)); //依todolist的ID做排序
+  curTodos.forEach((item) => {
     let isChecked = item.completed_at ? "checked" : "";
     let addCheckClass = item.completed_at ? "list-addcheck" : "";
 
     dataList += `<div class="todo-item" data-id="${item.id}">
-        <input id="${item.id}" type="checkbox" class="todo-checkbox " ${isChecked} onchange="toggleTodo('${item.id}')">
+        <input id="${item.id}" type="checkbox" class="todo-checkbox" ${isChecked} onchange="toggleTodo('${item.id}')">
         <span class="todo-content ${addCheckClass}" contenteditable="false" >${item.content}</span>
         <button class="delete-btn" onclick="deleteTodo('${item.id}')">✕</button>
       </div>
@@ -209,38 +208,38 @@ function renderTodoList(todos, unfinished) {
     <a href="#" onclick ="deleteFinishedList(event)">清除已完成項目</a></div>`;
 
   renderList.innerHTML = dataList;
-  tagsActive(); //添加點擊標籤時的焦點樣式
   document.getElementById("addText").value = ""; // 清空input輸入內容
 }
 
 function deleteFinishedList(e) {
   e.preventDefault();
-
-  //取得已完成的代辦事項
-  getTodo("已完成", (completedTodos) => {
-    Promise.all(completedTodos.map((todo) => deleteTodo(todo.id)))
-      .then(() => {
-        // 刪除已完成項目後根據當前篩選條件重新渲染列表
-        refreshTodoList();
-      })
-      .catch((error) => console.error("刪除已完成待辦事項時出錯：", error));
-  });
-}
-
-function tagsActive() {
-  tags.forEach((tag) => {
-    tag.addEventListener("click", function (e) {
-      filterTarget = e.target.innerText;
-      refreshTodoList();
-
-      // 先移除所有元素的 list-active 樣式
-      tags.forEach((t) => t.classList.remove("list-active"));
-      // 為當前點擊的元素添加 list-active 樣式
-      this.classList.add("list-active");
-    });
+  todos.forEach((e) => {
+    if (e.completed_at !== null) {
+      deleteTodo(e.id);
+    }
   });
 }
 
 function refreshTodoList() {
   getTodo(filterTarget === "全部" ? "" : filterTarget);
 }
+
+tags.forEach((tag) => {
+  tag.addEventListener("click", function (e) {
+    filterTarget = e.target.innerText;
+    let curTodos =
+      {
+        全部: todos,
+        已完成: todos.filter((item) => item.completed_at !== null),
+        待完成: todos.filter((item) => item.completed_at === null),
+      }[filterTarget] || [];
+
+    renderTodoList(curTodos, unfinished);
+    // 先移除所有元素的 list-active 樣式
+    tags.forEach((t) => t.classList.remove("list-active"));
+    // 為當前點擊的元素添加 list-active 樣式
+    this.classList.add("list-active");
+  });
+});
+
+signOutBtn.addEventListener("click", signOutTodoList);
