@@ -6,6 +6,7 @@ let filterTarget;
 const renderList = document.querySelector(".render-List");
 const signOutBtn = document.querySelector(".todo-nav-btn");
 
+//剛進入網頁確認是否是登入狀態
 setAxiosToken();
 
 //表單顯示登入或註冊帳號
@@ -117,6 +118,8 @@ function setAxiosToken() {
     todo.classList.remove("none");
     todo.querySelector("p").textContent = `${nickname}的代辦`;
     getTodo();
+  } else {
+    return;
   }
 }
 
@@ -132,15 +135,7 @@ function addItemsForm(event) {
     return false; // 阻止表單提交
   }
 
-  addTodo(addText)
-    .then(() => {
-      getTodo();
-      alert("新增成功");
-    })
-    .catch((error) => {
-      console.error("新增失敗:", error);
-      alert("新增失敗，請稍後再試");
-    });
+  addTodo(addText);
 }
 
 //監聽列表點擊
@@ -220,26 +215,26 @@ function deleteFinishedList(e) {
   });
 }
 
-function refreshTodoList() {
-  getTodo(filterTarget === "全部" ? "" : filterTarget);
-}
-
 tags.forEach((tag) => {
   tag.addEventListener("click", function (e) {
     filterTarget = e.target.innerText;
-    let curTodos =
-      {
-        全部: todos,
-        已完成: todos.filter((item) => item.completed_at !== null),
-        待完成: todos.filter((item) => item.completed_at === null),
-      }[filterTarget] || [];
-
-    renderTodoList(curTodos, unfinished);
+    setCurTodo();
     // 先移除所有元素的 list-active 樣式
-    tags.forEach((t) => t.classList.remove("list-active"));
+    tags.forEach((tag) => tag.classList.remove("list-active"));
     // 為當前點擊的元素添加 list-active 樣式
     this.classList.add("list-active");
   });
 });
+
+function setCurTodo() {
+  let curTodos =
+    {
+      全部: todos,
+      已完成: todos.filter((item) => item.completed_at !== null),
+      待完成: todos.filter((item) => item.completed_at === null),
+    }[filterTarget] || [];
+
+  renderTodoList(curTodos, unfinished);
+}
 
 signOutBtn.addEventListener("click", signOutTodoList);

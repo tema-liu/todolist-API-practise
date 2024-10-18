@@ -55,14 +55,12 @@ function signOut(token) {
     })
     .catch((error) => alert(error.response.data.message));
 }
-let count = 0;
 
 //取得todolist
 function getTodo() {
   axios
     .get(`${apiUrl}/todos`)
     .then((res) => {
-      console.log(count++);
       todos = res.data.todos;
 
       todos.length > 0
@@ -72,7 +70,13 @@ function getTodo() {
       //算出未完成項目數量
       unfinished = todos.filter((e) => e.completed_at === null).length;
 
-      renderTodoList(todos, unfinished);
+      //判斷是否存有filterTarget或者為全部，渲染整筆資料
+      //判斷為否則進行篩選
+      if (filterTarget === "全部" || !filterTarget) {
+        renderTodoList(todos, unfinished);
+      } else {
+        setCurTodo();
+      }
     })
     .catch((error) => console.log(error.response.data));
 }
@@ -86,9 +90,12 @@ function addTodo(content) {
       },
     })
     .then((res) => {
-      return res.data;
+      getTodo();
+      alert(`新增成功！${res.data.content}`);
+      tags.forEach((t) => t.classList.remove("list-active"));
+      tags[0].classList.add("list-active");
     })
-    .catch((error) => console.log(error.response.data.message));
+    .catch((error) => alert(error.response.data.message));
 }
 
 //修改todolist
