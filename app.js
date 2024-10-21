@@ -50,10 +50,12 @@ function signOut(token) {
     .delete(`${apiUrl}/users/sign_out`)
     .then((res) => {
       alert(res.data.message);
+    })
+    .catch((error) => alert(error.response.data.message))
+    .finally(() => {
       localStorage.clear();
       window.location.reload();
-    })
-    .catch((error) => alert(error.response.data.message));
+    });
 }
 
 //取得todolist
@@ -61,6 +63,7 @@ function getTodo() {
   axios
     .get(`${apiUrl}/todos`)
     .then((res) => {
+      console.log(res.data);
       todos = res.data.todos;
 
       todos.length > 0
